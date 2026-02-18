@@ -10,15 +10,16 @@
     "db:migrate": "cd backend && npx prisma migrate deploy",
     "db:seed": "cd backend && npm run seed",
     "prisma:generate": "prisma generate --schema backend/prisma/schema.prisma",
+    "vercel-build": "npm run prisma:generate && prisma migrate deploy --schema backend/prisma/schema.prisma && npm run build",
     "postinstall": "npm run prisma:generate",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@google/genai": "^1.41.0",
-    "@prisma/client": "^6.3.1",
+    "@prisma/client": "^6.19.2",
     "bcryptjs": "^3.0.3",
-    "prisma": "^6.3.1",
+    "prisma": "^6.19.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },

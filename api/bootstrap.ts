@@ -1,12 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
-const prisma = globalForPrisma.prisma ?? new PrismaClient();
-
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma;
-}
+import { prisma } from './_lib/prisma';
+import { methodNotAllowed, parseJsonBody } from './_lib/task-utils';
 
 export default async function handler(req: any, res: any) {
   if (process.env.BOOTSTRAP_DISABLED === 'true') {
@@ -23,13 +17,10 @@ export default async function handler(req: any, res: any) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
+  if (req.method !== 'POST') return methodNotAllowed(res, ['POST']);
 
   try {
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    const body = parseJsonBody(req);
     const { tenantId, tenantName, email, password } = body ?? {};
 
     if (!tenantId || !tenantName || !email || !password) {
