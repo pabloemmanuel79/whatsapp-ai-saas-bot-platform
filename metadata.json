@@ -1,0 +1,8 @@
+{
+  "name": "WhatsApp AI SaaS Bot Platform",
+  "description": "A comprehensive SaaS platform for managing AI-driven WhatsApp bots across various industries like gastronomy, automotive services, and beauty salons, featuring an integrated CRM and AI knowledge base management.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
