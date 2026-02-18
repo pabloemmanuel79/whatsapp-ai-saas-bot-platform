@@ -26,9 +26,12 @@ model User {
   name      String
   email     String
   role      String
+  passwordHash String?
   tenant    Tenant   @relation(fields: [tenantId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([tenantId, email])
 }
 
 model Lead {

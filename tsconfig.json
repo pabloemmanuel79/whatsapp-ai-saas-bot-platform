@@ -18,5 +18,5 @@
     "allowImportingTsExtensions": true,
     "noEmit": true
   },
-  "include": ["src", "index.tsx", "vite.config.ts"]
+  "include": ["src", "api", "index.tsx", "vite.config.ts"]
 }

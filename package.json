@@ -9,13 +9,18 @@
     "dev:backend": "cd backend && npm run dev",
     "db:migrate": "cd backend && npx prisma migrate deploy",
     "db:seed": "cd backend && npm run seed",
+    "prisma:generate": "prisma generate --schema backend/prisma/schema.prisma",
+    "postinstall": "npm run prisma:generate",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/genai": "^1.41.0",
+    "@prisma/client": "^6.3.1",
+    "bcryptjs": "^3.0.3",
+    "prisma": "^6.3.1",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "@google/genai": "^1.41.0"
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

@@ -30,6 +30,8 @@ Copiar `.env.example` y ajustar valores:
 - Backend:
   - `PORT` (default 4000)
   - `DATABASE_URL` (SQLite, default `file:./dev.db`)
+  - `BOOTSTRAP_SECRET` (secreto obligatorio para `POST /api/bootstrap`)
+  - `BOOTSTRAP_DISABLED` (`false` por defecto; poner `true` despues de inicializar)
 
 ## Ejecucion local
 
@@ -53,6 +55,62 @@ Backend: `http://localhost:4000`
 - `tenantId`: `tenant_demo_1`
 - `email`: `admin@tallercentral.ai`
 - `password`: cualquier valor (login mock temporal)
+
+## Bootstrap en produccion (Vercel Function)
+
+Endpoint: `POST /api/bootstrap`
+
+Body JSON:
+
+```json
+{
+  "tenantId": "tenant_demo_1",
+  "tenantName": "Taller Central",
+  "email": "admin@tallercentral.ai",
+  "password": "Admin1234!"
+}
+```
+
+Headers requeridos:
+
+- `content-type: application/json`
+- `x-bootstrap-secret: <BOOTSTRAP_SECRET>`
+
+Reglas de seguridad:
+
+- Si `BOOTSTRAP_DISABLED=true`, responde `403`.
+- Si falta `BOOTSTRAP_SECRET` en entorno, responde `500`.
+- Si `x-bootstrap-secret` no coincide, responde `401`.
+
+Ejemplo `curl`:
+
+```bash
+curl -X POST "https://<tu-dominio-vercel>/api/bootstrap" \
+  -H "content-type: application/json" \
+  -H "x-bootstrap-secret: <BOOTSTRAP_SECRET>" \
+  -d '{
+    "tenantId": "tenant_demo_1",
+    "tenantName": "Taller Central",
+    "email": "admin@tallercentral.ai",
+    "password": "Admin1234!"
+  }'
+```
+
+Comportamiento:
+
+- Si tenant y admin ya existen, responde `200` indicando sistema ya inicializado.
+- Si faltan, crea tenant y/o usuario admin (`role=admin`) con `password` hasheado (`bcryptjs`).
+
+### Pasos exactos en Vercel (one-shot)
+
+1. En Vercel -> Project -> Settings -> Environment Variables, agregar:
+   - `BOOTSTRAP_SECRET` (valor largo y aleatorio)
+   - `BOOTSTRAP_DISABLED=false`
+2. Redeploy del proyecto para aplicar variables.
+3. Ejecutar `POST /api/bootstrap` una sola vez con el header `x-bootstrap-secret`.
+4. Volver a Vercel -> Environment Variables y cambiar:
+   - `BOOTSTRAP_DISABLED=true`
+5. Redeploy final para dejar bootstrap bloqueado.
 
 ## Endpoints implementados
 
